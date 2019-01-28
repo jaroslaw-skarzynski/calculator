@@ -26,7 +26,7 @@ public class Calculator {
      */
 	public int multiply(int a, int b) {
 	    if(a <= 0 || b <= 0) {
-	        throw new IllegalArgumentException("Argumentu nie są liczbami dodatnimi!");
+	        throw new IllegalArgumentException("Argumenty nie są liczbami dodatnimi!");
         }
 
 		return a * b;
