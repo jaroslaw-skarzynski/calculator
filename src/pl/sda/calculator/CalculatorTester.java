@@ -15,7 +15,8 @@ public class CalculatorTester {
     }
 
     private void runTests() {
-        System.out.printf("%nParametry testara: attemptsNumber=%d, valueFrom=%d, valueTo=%d%n%n",
+        pl.sda.math.calculator.Utils.printLogo();
+        System.out.printf("Parametry: attemptsNumber=%d, valueFrom=%d, valueTo=%d%n%n",
                 testerProperties.getAttemptsNumber(), testerProperties.getValueFrom(), testerProperties.getValueTo());
 
         for (int i = 1; i <= testerProperties.getAttemptsNumber(); i++) {
@@ -65,6 +66,7 @@ public class CalculatorTester {
                     System.out.printf("%s min(%.2f, %.2f) = %.2f%n", counter, x, y, resultDouble);
                     break;
             }
+            delay(methodNumber);
         }
     }
 
@@ -78,6 +80,12 @@ public class CalculatorTester {
 
     private double getRandomDouble() {
         return ThreadLocalRandom.current().nextDouble(testerProperties.getValueFrom(), testerProperties.getValueTo());
+    }
+
+    private void delay(int number) {
+        try {
+            Thread.sleep(number * testerProperties.getDelayMillis());
+        } catch (InterruptedException ignored) {}
     }
 
     public static void main(String[] args) throws IOException {
