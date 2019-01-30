@@ -1,54 +1,36 @@
 package pl.sda.pl.sda.jvm.demo;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class MemoryLeakSample {
-    private static final long LENGTH = 1024 * 2;
-
+    LocalDateTime startTime;
     public void runSample() {
-        Map<Key, String> map = new HashMap<>();
+        startTime = LocalDateTime.now();
+        DataCache dataCache = new DataCache();
+        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+        executorService.scheduleAtFixedRate(() -> logCacheStatistics(dataCache), 10, 20, TimeUnit.SECONDS);
         while (true) {
             for (int i = 0; i < 100; i++) {
-                Key key = new Key(i, LENGTH);
-                if (!map.containsKey(key)) {
-                    map.put(key, "Numer:" + i);
-                }
+                dataCache.getValue(i);
             }
 
             try {
-                Thread.sleep(1000);
+                Thread.sleep(500);
             } catch (InterruptedException ignored) {}
         }
+    }
+
+    private void logCacheStatistics(DataCache dataCache) {
+        Duration duration = Duration.between(startTime, LocalDateTime.now());
+        System.out.printf("[%s] %s%n", duration, dataCache.getStatisticsString());
     }
 
     public static void main(String[] args) {
         MemoryLeakSample sample = new MemoryLeakSample();
         sample.runSample();
-    }
-}
-
-class Key {
-    private String key;
-
-    public Key(long number, long length) {
-        String binaryString = Long.toBinaryString(number);
-        StringBuilder keyBuilder = new StringBuilder();
-        for (long i = 0; i < length - binaryString.length(); i++) {
-            keyBuilder.append('0');
-        }
-        keyBuilder.append(binaryString);
-        key = keyBuilder.toString();
-    }
-
-    @Override
-    public final int hashCode() {
-        return Objects.hash(key);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
     }
 }
